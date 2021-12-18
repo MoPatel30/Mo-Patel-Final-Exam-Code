@@ -48,13 +48,13 @@ public class AirportRoutes{
     }
     
     
-    public void readAndStoreData(String airportsFile, String routesFile){
+    public void readAndStoreData(String airportsF, String routesF){
         BufferedReader r1;
         BufferedReader r2;
             
         try{
-            r1 = new BufferedReader(new FileReader(airportsFile)); 
-            r2 = new BufferedReader(new FileReader(routesFile)); 
+            r1 = new BufferedReader(new FileReader(airportsF)); 
+            r2 = new BufferedReader(new FileReader(routesF)); 
             String line = r1.readLine(); 
             String route = r2.readLine();
             int count = 0;
@@ -137,40 +137,40 @@ public class AirportRoutes{
         
         System.out.println("max SCC size: " + max);
     }   
-    public void dFT(int v){
-        scc.add(v);
+    public void dFT(int u){
+        scc.add(u);
         maxNumOfCC += 1;
-        marked[v] = true;
+        marked[u] = true;
             
-        for (Integer u: dGraph.get(v).getOutList()){
-            if(!marked[u]){
-                dFT(u);   
+        for (Integer v: dGraph.get(u).getOutList()){
+            if(!marked[v]){
+                dFT(v);   
             }
         }
     }
 
     
-    public void postOrderDepthFirstTraversal(boolean reverse){
+    public void postOrderDepthFirstTraversal(boolean rev){
         for (int i=0; i<numOfAirports; i++){
            if (!marked[i]){
-               postOrderDFT(i,reverse);
+               postOrderDFT(i,rev);
            }
         }
     }   
-    public void postOrderDFT(int v,boolean reverse){           
+    public void postOrderDFT(int v, boolean rev){           
         marked[v] = true;
         
-        if (reverse) {
+        if (rev) {
             for (Integer u: dGraph.get(v).getInList()){
                 if (!marked[u]){
-                    postOrderDFT(u,reverse);
+                    postOrderDFT(u,rev);
                 }
             }
         }
         else {
             for (Integer u:dGraph.get(v).getOutList()){
                   if (!marked[u]){
-                      postOrderDFT(u,reverse);
+                      postOrderDFT(u,rev);
                   }
             }
         }
@@ -191,7 +191,6 @@ public class AirportRoutes{
         dirGraph.postOrderDepthFirstTraversal(true);
         dirGraph.marked= new boolean[p.numVertex];
         dirGraph.depthFirstTraversal();
-        System.out.println(dirGraph.numOfSCC);
         
         HashedDirectedGraph hashedDGraph = p.buildReducedGraph(dirGraph); 
         System.out.println("size: " + hashedDGraph.getNumVertex());
@@ -223,17 +222,17 @@ public class AirportRoutes{
           
         return res;
     }  
-    public ArrayList<ArrayList<Integer>> combine(ArrayList<DirectedNodeList> d){
+    public ArrayList<ArrayList<Integer>> combine(ArrayList<DirectedNodeList> dList){
         ArrayList<ArrayList<Integer>> merge = new ArrayList<>();
         
-        for(int i=0; i<d.size(); i++){
+        for(int i=0; i<dList.size(); i++){
             ArrayList<Integer> mix = new ArrayList<>(); 
             
-            for(Integer v: d.get(i).getOutList()){
+            for(Integer v: dList.get(i).getOutList()){
                 mix.add(v);
             }
             
-            for(Integer v2: d.get(i).getInList()){
+            for(Integer v2: dList.get(i).getInList()){
                 mix.add(v2);
             }
             
@@ -244,11 +243,11 @@ public class AirportRoutes{
     }
     
 
-    public int recursiveDFT(ArrayList<DirectedNodeList> ar){
+    public int recursiveDFT(ArrayList<DirectedNodeList> list){
         ArrayList<ArrayList<Integer>> weakCC = new ArrayList<>();
-        boolean[] marked = new boolean[ar.size()];
+        boolean[] marked = new boolean[list.size()];
         
-        for (int i = 0; i < ar.size(); i++){
+        for (int i = 0; i < list.size(); i++){
             if (!marked[i]){
                 ArrayList<Integer> comp = new ArrayList<>();
                 dftRec(i, marked, comp);
@@ -258,13 +257,13 @@ public class AirportRoutes{
         
         return weakCC.size();
     }   
-    public void dftRec(int idx, boolean[] mark, ArrayList<Integer> comp){
-        mark[idx] = true;
-        comp.add(idx);
+    public void dftRec(int index, boolean[] marker, ArrayList<Integer> comp){
+        marker[index] = true;
+        comp.add(index);
         
-        for (int v: combined.get(idx)){
-            if (!mark[v]){
-                dftRec(v, mark, comp);
+        for (int v: combined.get(index)){
+            if (!marker[v]){
+                dftRec(v, marker, comp);
             }
         }
     }
